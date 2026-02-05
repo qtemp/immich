@@ -5,10 +5,11 @@ import type { AssetResponseDto } from '@immich/sdk';
  * Suggests the best duplicate asset to keep from a list of duplicates.
  *
  * Selection priority (highest -> lowest):
- *  1. Files with .heic or .heif extension are considered superior
- *  2. Largest image area (exifImageWidth * exifImageHeight)
- *  3. Largest file size (exifInfo.fileSizeInByte)
- *  4. Most EXIF/meta data entries (getExifCount)
+ *  1. Largest image area (exifImageWidth * exifImageHeight)
+ *  2. Prefer .raw or .rw2 file extensions
+ *  3. Files with .heic or .heif extension are considered superior
+ *  4. Largest file size (exifInfo.fileSizeInByte)
+ *  5. Most EXIF/meta data entries (getExifCount)
  *
  * The asset ranked highest according to the above rules is returned as the suggestion.
  *
@@ -23,6 +24,11 @@ export const suggestDuplicate = (assets: AssetResponseDto[]): AssetResponseDto |
     return /\.(heic|heif)$/i.test(name) ? 1 : 0;
   };
 
+  const isRawLike = (asset: AssetResponseDto): number => {
+    const name = asset.originalFileName ?? '';
+    return /\.(raw|rw2)$/i.test(name) ? 1 : 0;
+  };
+
   const area = (asset: AssetResponseDto): number => {
     const w = asset.exifInfo?.exifImageWidth ?? 0;
     const h = asset.exifInfo?.exifImageHeight ?? 0;
@@ -33,19 +39,23 @@ export const suggestDuplicate = (assets: AssetResponseDto[]): AssetResponseDto |
 
   // Sort in-place by the priority rules descending, so the best candidate will be at index 0
   assets.sort((a, b) => {
-    // 1) HEIC/HEIF preferred
-    const heicDiff = isHeicLike(b) - isHeicLike(a);
-    if (heicDiff !== 0) return heicDiff;
-
-    // 2) Largest image area
+    // 1) Largest image area
     const areaDiff = area(b) - area(a);
     if (areaDiff !== 0) return areaDiff;
 
-    // 3) Largest file size
+    // 2) Prefer .raw/.rw2
+    const rawDiff = isRawLike(b) - isRawLike(a);
+    if (rawDiff !== 0) return rawDiff;
+
+    // 3) HEIC/HEIF preferred
+    const heicDiff = isHeicLike(b) - isHeicLike(a);
+    if (heicDiff !== 0) return heicDiff;
+
+    // 4) Largest file size
     const sizeDiff = fileSize(b) - fileSize(a);
     if (sizeDiff !== 0) return sizeDiff;
 
-    // 4) Most EXIF/meta entries
+    // 5) Most EXIF/meta entries
     const exifDiff = getExifCount(b) - getExifCount(a);
     if (exifDiff !== 0) return exifDiff;
 
