@@ -7,7 +7,7 @@ import type { AssetResponseDto } from '@immich/sdk';
  * Selection priority (highest -> lowest):
  *  1. Largest image area (exifImageWidth * exifImageHeight)
  *  2. Prefer .raw or .rw2 file extensions
- *  3. Files with .heic or .heif extension are considered superior
+ *  3. Prefer .heic or .heif file extensions
  *  4. Largest file size (exifInfo.fileSizeInByte)
  *  5. Most EXIF/meta data entries (getExifCount)
  *
@@ -47,7 +47,7 @@ export const suggestDuplicate = (assets: AssetResponseDto[]): AssetResponseDto |
     const rawDiff = isRawLike(b) - isRawLike(a);
     if (rawDiff !== 0) return rawDiff;
 
-    // 3) HEIC/HEIF preferred
+    // 3) Prefer HEIC/HEIF
     const heicDiff = isHeicLike(b) - isHeicLike(a);
     if (heicDiff !== 0) return heicDiff;
 
