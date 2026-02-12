@@ -16,6 +16,8 @@
       <ol class="ms-8 mt-2" style="list-style: decimal">
         <li>{$t('deduplication_criteria_1')}</li>
         <li>{$t('deduplication_criteria_2')}</li>
+        <li>{$t('deduplication_criteria_3')}</li>
+        <li>{$t('deduplication_criteria_4')}</li>
       </ol>
     </div>
   </ModalBody>
