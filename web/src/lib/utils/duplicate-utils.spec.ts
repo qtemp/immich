@@ -19,7 +19,7 @@ describe('suggest a duplicate', () => {
       { originalMimeType: 'image/heic', exifInfo: { exifImageWidth: 200, exifImageHeight: 100, fileSizeInByte: 400 } },
     ];
     // Same area, prefer heic
-    expect(suggestDuplicate(assets as AssetResponseDto[])).toEqual(assets[1]);
+    expect(suggestDuplicate(assets as AssetResponseDto[])).toEqual(assets[2]);
   });
 
   it('prefers heif MIME types over others, except heic, when area is identical', () => {
