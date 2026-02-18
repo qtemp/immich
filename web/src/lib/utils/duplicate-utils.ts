@@ -37,8 +37,8 @@ export const suggestDuplicate = (assets: AssetResponseDto[]): AssetResponseDto |
 
   const fileSize = (asset: AssetResponseDto): number => asset.exifInfo?.fileSizeInByte ?? 0;
 
-  // Sort in-place by the priority rules descending, so the best candidate will be at index 0
-  const sortedAssets = assets.sort((a, b) => {
+  // Sort the priority rules descending, so the best candidate will be at index 0
+  const sortedAssets = assets.toSorted((a, b) => {
 
     // 1) Largest image area
     const areaDiff = area(b) - area(a);
